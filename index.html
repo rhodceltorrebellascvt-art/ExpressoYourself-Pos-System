@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Espresso Yourself POS System</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    :root{
+      --forest:#2E4A3B;
+      --coffee:#5C4033;
+      --moss:#6F8B68;
+      --cream:#F4F0E8;
+      --light:#FAF8F3;
+      --shadow:rgba(0,0,0,0.12);
+      --danger:#b54848;
+    }
+
+    body{
+      font-family:'Poppins',sans-serif;
+      background:var(--cream);
+      color:var(--forest);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+      radial-gradient(circle at top left, rgba(255,255,255,0.5), transparent 35%),
+      radial-gradient(circle at bottom right, rgba(46,74,59,0.08), transparent 35%);
+      z-index:-1;
+    }
+
+    .pos-container{
+      display:grid;
+      grid-template-columns: 2fr 1fr;
+      min-height:100vh;
+    }
+
+    /* LEFT SIDE */
+
+    .menu-panel{
+      padding:30px;
+    }
+
+    .brand-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:30px;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .brand-title h1{
+      font-family:'Playfair Display',serif;
+      font-size:2.6rem;
+      color:var(--forest);
+      line-height:1.1;
+    }
+
+    .brand-title p{
+      color:#617268;
+      margin-top:8px;
+    }
+
+    .search-box{
+      position:relative;
+      width:320px;
+      max-width:100%;
+    }
+
+    .search-box input{
+      width:100%;
+      padding:15px 20px;
+      border-radius:18px;
+      border:none;
+      outline:none;
+      background:var(--light);
+      border:1px solid rgba(46,74,59,0.08);
+      font-size:0.95rem;
+      color:var(--forest);
+      box-shadow:0 8px 20px rgba(0,0,0,0.04);
+    }
+
+    .menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  justify-content: center; 
+  align-content: start;
+}
+
+.menu-card {
+  width: 100%;
+  max-width: 380px; 
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(10px);
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(46,74,59,0.08);
+  transition: 0.35s ease;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto; 
+}
+
+.menu-card:hover{
+  transform:translateY(-8px);
+}
+
+/* EMPTY SEARCH STATE */
+
+.no-results{
+  width:100%;
+  grid-column:1 / -1;
+
+  text-align:center;
+  padding:60px 20px;
+
+  background:rgba(255,255,255,0.7);
+  border-radius:24px;
+
+  color:#6d7d74;
+
+  font-size:1rem;
+  font-weight:500;
+
+  border:1px dashed rgba(46,74,59,0.15);
+}
+
+    .menu-card img{
+      width:100%;
+      height:200px;
+      object-fit:cover;
+    }
+
+    .card-content{
+      padding:22px;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .card-content h3{
+      font-family:'Playfair Display',serif;
+      color:var(--forest);
+      margin-bottom:10px;
+      font-size:1.5rem;
+    }
+
+    .item-category{
+      color:#75857c;
+      font-size:0.85rem;
+      margin-bottom:12px;
+    }
+
+    .price{
+      font-size:1.2rem;
+      font-weight:700;
+      color:var(--coffee);
+      margin-bottom:18px;
+    }
+
+    .add-btn{
+      margin-top:auto;
+      border:none;
+      padding:14px;
+      border-radius:16px;
+      background:var(--forest);
+      color:white;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .add-btn:hover{
+      background:#1f392c;
+    }
+
+    /* RIGHT SIDE */
+
+    .cart-panel{
+      background:var(--light);
+      border-left:1px solid rgba(46,74,59,0.08);
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
+
+    .cart-title{
+      font-family:'Playfair Display',serif;
+      font-size:2rem;
+      margin-bottom:25px;
+    }
+
+    .cart-items{
+      flex:1;
+      overflow-y:auto;
+      padding-right:6px;
+    }
+
+    .empty-cart{
+      text-align:center;
+      color:#7b8b82;
+      margin-top:60px;
+      line-height:1.8;
+    }
+
+    .cart-item{
+      background:white;
+      border-radius:22px;
+      padding:18px;
+      margin-bottom:16px;
+      box-shadow:0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    .cart-item-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .cart-item-name{
+      font-weight:600;
+      color:var(--forest);
+    }
+
+    .cart-item-price{
+      color:var(--coffee);
+      font-weight:700;
+    }
+
+    .qty-controls{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+
+    .qty-buttons{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .qty-btn{
+      width:32px;
+      height:32px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:1rem;
+      font-weight:700;
+      background:var(--moss);
+      color:white;
+    }
+
+    .qty{
+      min-width:20px;
+      text-align:center;
+      font-weight:600;
+    }
+
+    .remove-btn{
+      border:none;
+      background:var(--danger);
+      color:white;
+      padding:8px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:0.85rem;
+    }
+
+    .summary{
+      border-top:1px solid rgba(46,74,59,0.12);
+      padding-top:22px;
+      margin-top:10px;
+    }
+
+    .summary-row{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:14px;
+      color:#52635a;
+    }
+
+    .summary-row.total{
+      font-size:1.3rem;
+      font-weight:700;
+      color:var(--forest);
+      margin-top:10px;
+    }
+
+    .checkout-btn,
+    .print-btn{
+      width:100%;
+      border:none;
+      padding:16px;
+      border-radius:18px;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+      margin-top:14px;
+      font-size:1rem;
+    }
+
+    .checkout-btn{
+      background:var(--forest);
+      color:white;
+    }
+
+    .checkout-btn:hover{
+      background:#1f392c;
+    }
+
+    .print-btn{
+      background:var(--moss);
+      color:white;
+    }
+
+    .print-btn:hover{
+      background:#5f7759;
+    }
+
+    /* RECEIPT */
+
+    .receipt{
+      display:none;
+    }
+
+    @media print {
+
+      body *{
+        visibility:hidden;
+      }
+
+      .receipt,
+      .receipt *{
+        visibility:visible;
+      }
+
+      .receipt{
+        display:block;
+        position:absolute;
+        inset:0;
+        background:white;
+        padding:40px;
+        color:black;
+        font-family:monospace;
+      }
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width:1100px){
+
+      .pos-container{
+        grid-template-columns:1fr;
+      }
+
+      .cart-panel{
+        position:relative;
+        height:auto;
+      }
+    }
+
+    @media(max-width:700px){
+
+      .brand-title h1{
+        font-size:2rem;
+      }
+
+      .menu-panel,
+      .cart-panel{
+        padding:20px;
+      }
+
+      .menu-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="pos-container">
+
+    <!-- LEFT PANEL -->
+    <section class="menu-panel">
+
+      <div class="brand-header">
+
+        <div class="brand-title">
+          <h1>Espresso Yourself</h1>
+          <p>Brewed by Nature • POS System</p>
+        </div>
+
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search coffee or food...">
+        </div>
+
+      </div>
+
+      <div class="menu-grid" id="menuGrid"></div>
+
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <aside class="cart-panel">
+
+      <h2 class="cart-title">Order Summary</h2>
+
+      <div class="cart-items" id="cartItems">
+
+        <div class="empty-cart">
+          No items added yet ☕
+        </div>
+
+      </div>
+
+      <div class="summary">
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="subtotal">₱0</span>
+        </div>
+
+        <div class="summary-row">
+          <span>VAT (12%)</span>
+          <span id="tax">₱0</span>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="total">₱0</span>
+        </div>
+
+        <button class="checkout-btn" id="checkoutBtn">
+          Pay Now
+        </button>
+
+        <button class="print-btn" onclick="printReceipt()">
+          Print Receipt
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- PRINT RECEIPT -->
+  <div class="receipt" id="receipt"></div>
+
+  <script>
+
+    /* =========================
+       MENU DATA
+    ========================== */
+
+    const menuItems = [
+
+      {
+        id:1,
+        name:"Forest Mocha",
+        category:"Coffee",
+        price:220,
+        image:"https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1200&auto=format&fit=crop"
+      },
+
+      {
+        id:2,
+        name:"Verdant Velvet",
+        category:"Coffee",
+        price:210,
+        image:"https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=1200&auto=format&fit=crop"
+      },
+
+      {
+        id:3,
+        name:"The Bloom",
+        category:"Coffee",
+        price:240,
+        image:"TheB.jpg"
+      },
+
+      {
+        id:4,
+        name:"Morning Mist",
+        category:"Coffee",
+        price:180,
+        image:"MorningM.jpg"
+      },
+
+      {
+        id:5,
+        name:"Wild Americano",
+        category:"Coffee",
+        price:160,
+        image:"WildA.jpg"
+      },
+
+      {
+        id:6,
+        name:"Canopy Cold Brew",
+        category:"Coffee",
+        price:190,
+        image:"CanopyC.jpg"
+      },
+
+      {
+        id:7,
+        name:"Forest Waffle",
+        category:"Food",
+        price:250,
+        image:"ForestW.jpg"
+      },
+
+      {
+        id:8,
+        name:"Artisan Pan de Sal",
+        category:"Food",
+        price:120,
+        image:"ArtisanP.jpg"
+      },
+
+      {
+        id:9,
+        name:"Garden Salad",
+        category:"Food",
+        price:280,
+        image:"GardenS.jpg"
+      },
+
+      {
+        id:10,
+        name:"Nature Donuts",
+        category:"Food",
+        price:150,
+        image:"NatureD.jpg"
+      }
+
+    ];
+
+    /* =========================
+       GLOBALS
+    ========================== */
+
+    const menuGrid = document.getElementById("menuGrid");
+    const cartItemsContainer = document.getElementById("cartItems");
+
+    const subtotalEl = document.getElementById("subtotal");
+    const taxEl = document.getElementById("tax");
+    const totalEl = document.getElementById("total");
+
+    const searchInput = document.getElementById("searchInput");
+
+    let cart = [];
+
+    /* =========================
+   RENDER MENU
+========================== */
+
+function renderMenu(items){
+
+  /* CLEAR GRID */
+  menuGrid.innerHTML = "";
+
+  /* RE-APPLY GRID CLASS */
+  menuGrid.className = "menu-grid";
+
+  /* EMPTY STATE */
+  if(items.length === 0){
+
+    menuGrid.innerHTML = `
+      <div class="no-results">
+        🌿 No items found.
+      </div>
+    `;
+
+    return;
+  }
+
+  /* RENDER CARDS */
+  items.forEach(item => {
+
+    const card = document.createElement("div");
+
+    /* IMPORTANT */
+    card.classList.add("menu-card");
+
+    card.innerHTML = `
+      <img src="${item.image}" alt="${item.name}">
+
+      <div class="card-content">
+
+        <h3>${item.name}</h3>
+
+        <div class="item-category">
+          ${item.category}
+        </div>
+
+        <div class="price">
+          ₱${item.price}
+        </div>
+
+        <button class="add-btn">
+          Add to Order
+        </button>
+
+      </div>
+    `;
+
+    card.querySelector(".add-btn")
+      .addEventListener("click", () => addToCart(item));
+
+    menuGrid.appendChild(card);
+
+  });
+
+}
+
+/* INITIAL LOAD */
+renderMenu(menuItems);
+
+/* =========================
+   SEARCH FILTER
+========================== */
+
+searchInput.addEventListener("input", () => {
+
+  const value = searchInput.value
+    .trim()
+    .toLowerCase();
+
+  const filteredItems = menuItems.filter(item => {
+
+    return (
+      item.name.toLowerCase().includes(value) ||
+      item.category.toLowerCase().includes(value)
+    );
+
+  });
+
+  renderMenu(filteredItems);
+
+});
+
+    /* =========================
+       ADD TO CART
+    ========================== */
+
+    function addToCart(item){
+
+      const existingItem = cart.find(cartItem => cartItem.id === item.id);
+
+      if(existingItem){
+
+        existingItem.quantity++;
+
+      } else {
+
+        cart.push({
+          ...item,
+          quantity:1
+        });
+
+      }
+
+      renderCart();
+
+    }
+
+    /* =========================
+       RENDER CART
+    ========================== */
+
+    function renderCart(){
+
+      cartItemsContainer.innerHTML = "";
+
+      if(cart.length === 0){
+
+        cartItemsContainer.innerHTML = `
+          <div class="empty-cart">
+            No items added yet ☕
+          </div>
+        `;
+
+      }
+
+      cart.forEach(item => {
+
+        const cartItem = document.createElement("div");
+        cartItem.classList.add("cart-item");
+
+        cartItem.innerHTML = `
+
+          <div class="cart-item-top">
+
+            <div>
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-price">
+                ₱${item.price}
+              </div>
+            </div>
+
+            <div>
+              ₱${item.price * item.quantity}
+            </div>
+
+          </div>
+
+          <div class="qty-controls">
+
+            <div class="qty-buttons">
+
+              <button class="qty-btn minus-btn">−</button>
+
+              <span class="qty">${item.quantity}</span>
+
+              <button class="qty-btn plus-btn">+</button>
+
+            </div>
+
+            <button class="remove-btn">
+              Remove
+            </button>
+
+          </div>
+        `;
+
+        /* PLUS */
+
+        cartItem.querySelector(".plus-btn")
+          .addEventListener("click", () => {
+
+            item.quantity++;
+            renderCart();
+
+          });
+
+        /* MINUS */
+
+        cartItem.querySelector(".minus-btn")
+          .addEventListener("click", () => {
+
+            if(item.quantity > 1){
+
+              item.quantity--;
+
+            } else {
+
+              cart = cart.filter(cartItem => cartItem.id !== item.id);
+
+            }
+
+            renderCart();
+
+          });
+
+        /* REMOVE */
+
+        cartItem.querySelector(".remove-btn")
+          .addEventListener("click", () => {
+
+            cart = cart.filter(cartItem => cartItem.id !== item.id);
+
+            renderCart();
+
+          });
+
+        cartItemsContainer.appendChild(cartItem);
+
+      });
+
+      updateTotals();
+
+    }
+
+    /* =========================
+       UPDATE TOTALS
+    ========================== */
+
+    function updateTotals(){
+
+      const subtotal = cart.reduce((sum, item) => {
+
+        return sum + (item.price * item.quantity);
+
+      }, 0);
+
+      const tax = subtotal * 0.12;
+      const total = subtotal + tax;
+
+      subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+      taxEl.textContent = `₱${tax.toFixed(2)}`;
+      totalEl.textContent = `₱${total.toFixed(2)}`;
+
+    }
+
+    /* =========================
+       CHECKOUT
+    ========================== */
+
+    document.getElementById("checkoutBtn")
+      .addEventListener("click", () => {
+
+        if(cart.length === 0){
+
+          alert("Please add items first.");
+          return;
+
+        }
+
+        alert("Payment Successful! ☕");
+
+        cart = [];
+        renderCart();
+
+      });
+
+    /* =========================
+       PRINT RECEIPT
+    ========================== */
+
+    function printReceipt(){
+
+      if(cart.length === 0){
+
+        alert("Cart is empty.");
+        return;
+
+      }
+
+      const subtotal = cart.reduce((sum, item) => {
+        return sum + (item.price * item.quantity);
+      }, 0);
+
+      const tax = subtotal * 0.12;
+      const total = subtotal + tax;
+
+      const receipt = document.getElementById("receipt");
+
+      receipt.innerHTML = `
+
+        <h1>Espresso Yourself</h1>
+        <p>Brewed by Nature</p>
+
+        <hr><br>
+
+        ${cart.map(item => `
+          <p>
+            ${item.name} x ${item.quantity}
+            <span style="float:right">
+              ₱${item.price * item.quantity}
+            </span>
+          </p>
+        `).join("")}
+
+        <br><hr><br>
+
+        <p>
+          Subtotal
+          <span style="float:right">
+            ₱${subtotal.toFixed(2)}
+          </span>
+        </p>
+
+        <p>
+          VAT (12%)
+          <span style="float:right">
+            ₱${tax.toFixed(2)}
+          </span>
+        </p>
+
+        <h2>
+          Total
+          <span style="float:right">
+            ₱${total.toFixed(2)}
+          </span>
+        </h2>
+
+        <br><br>
+
+        <p>Thank you for visiting 🌿</p>
+
+      `;
+
+      window.print();
+
+    }
+
+  </script>
+
+</body>
+</html>
